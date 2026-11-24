@@ -45,6 +45,10 @@ add pub key data (shift,rightclick to paste) \
 In Jenkins URL: Go to Settings-> Nodes -> Built-in Node (make executors zero) \
 Add new Node - Jenkins-Agent -> Executors-2 -> root dir- /home/ubuntu -> Launch agent via SSH -> copy master private ip, private key, username-ubuntu -> Build now.
 
+Install Plugins in Jenkins: Maven Integration, Pipeline Maven Integration, Eclipse Temurin installer.
+
+Jenkins-> Tools -> Add maven and jdk versions to install automatically.
+
 
 
 
