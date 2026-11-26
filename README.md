@@ -3,15 +3,18 @@
 
 Installing Jenkins: 
 
-Install ubuntu ec2 instance (jenkins-master instance). sudo apt update. Install Java. \
-sudo apt install openjdk-21-jre-headless 
+Install ubuntu ec2 instance (jenkins-master instance). 
+
+sudo apt update \
+sudo apt install fontconfig openjdk-21-jre \
+java -version
 
 Install jenkins: \
 sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
   https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
 echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
   https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-  /etc/apt/sources.list.d/jenkins.list > /dev/null 
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
   
 sudo apt update 
 
