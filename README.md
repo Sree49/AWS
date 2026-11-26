@@ -153,6 +153,10 @@ Install Sonarqube Scanner, Sonar Quality Gates, Quality gates in Jenkins Plugins
 
 Jenkins-Portal -> Tools -> Check Install sonarqube automatically and save.
 
+Jenkins Portal-> System -> Add Sonarqube connection - server url, token select and save.
+
+Build Jenkins job.
+
 
 
 
