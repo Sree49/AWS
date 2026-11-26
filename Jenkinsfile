@@ -28,14 +28,17 @@ pipeline {
                  sh "mvn test"
            }
        }
-      stage("SonarQube Analysis"){
-           steps {
-	           script {
-		        withSonarQubeEnv(credentialsId: 'sonar') { 
-                        sh "mvn sonar:sonar"
-		        }
-	           }	
-           }
-      }
+	  stage('SonarQube Analysis') {
+    steps {
+        script {
+            withSonarQubeEnv('sonarqube') {
+                sh '''
+                    mvn clean verify \
+                    org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+                '''
+            }
+        }
+    }
+}
   }
 }
