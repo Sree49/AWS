@@ -190,11 +190,58 @@ Add new IAM role and provide administrator access and attach IAM role to ec2.
 ## Setup Kubernetes using eksctl
 Refer--https://github.com/aws-samples/eks-workshop/issues/734
 $ eksctl create cluster --name virtualtechbox-cluster \
---region ap-south-1 \
---node-type t2.small \
+--region ap-southeast-2 \
+--node-type m7i-flex.large \
 --nodes 3 \
 
 $ kubectl get nodes
+
+
+Argo cd installation:
+
+1 ) First, create a namespace
+    $ kubectl create namespace argocd
+
+2 ) Next, let's apply the yaml configuration files for ArgoCd
+    $ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+3 ) Now we can view the pods created in the ArgoCD namespace.
+    $ kubectl get pods -n argocd
+
+4 ) To interact with the API Server we need to deploy the CLI:
+    $ curl --silent --location -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.4.7/argocd-linux-amd64
+    $ chmod +x /usr/local/bin/argocd
+
+5 ) Expose argocd-server
+    $ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+6 ) Wait about 2 minutes for the LoadBalancer creation
+    $ kubectl get svc -n argocd
+
+7 ) Get pasword and decode it.
+    $ kubectl get secret argocd-initial-admin-secret -n argocd -o yaml
+    $ echo WXVpLUg2LWxoWjRkSHFmSA== | base64 --decode
+
+## Add EKS Cluster to ArgoCD
+9 ) login to ArgoCD from CLI
+    $ argocd login a0acc69b224ef4938a32a5ee3a2c4cb4-533394942.ap-southeast-2.elb.amazonaws.com --username admin
+
+10 ) 
+     $ argocd cluster list
+
+11 ) Below command will show the EKS cluster
+     $ kubectl config get-contexts
+
+12 ) Add above EKS cluster to ArgoCD with below command
+     $ argocd cluster add i-00d944fa97a6e6ba7@virtualtechbox-cluster1.ap-southeast-2.eksctl.io  --name virtualtechbox-eks-cluster
+
+
+13 ) $ kubectl get svc
+============================================================= Cleanup =============================================================
+$ kubectl get all
+$ kubectl delete deployment.apps/virtualtechbox-regapp       //it will delete the deployment
+$ kubectl delete service/virtualtechbox-service              //it will delete the service
+$ eksctl delete cluster virtualtechbox --region ap-south-1     OR    eksctl delete cluster --region=ap-south-1 --name=virtualtechbox-cluster      //it will delete the EKS cluster
 
 
 
