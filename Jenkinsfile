@@ -4,6 +4,9 @@ pipeline {
         jdk 'java21'
         maven 'maven3'
     }
+	triggers {
+        githubPush()
+    }
 	environment {
 	    APP_NAME = "app-pipeline"
             RELEASE = "1.0.0"
@@ -23,7 +26,7 @@ pipeline {
 
         stage("Checkout from SCM"){
                 steps {
-                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/Sree49/AWS'
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/Sree49/AWS.git'
                 }
         }
     stage("Build Application"){
@@ -68,8 +71,11 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('',DOCKER_PASS) {
-                        docker_image = docker.build "${IMAGE_NAME}"
+                        docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                     }
+					 sh """
+                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+                        """
 
                     docker.withRegistry('',DOCKER_PASS) {
                         docker_image.push("${IMAGE_TAG}")
@@ -87,6 +93,28 @@ pipeline {
                }
            }
        }
+	  stage("Update the Deployment Tags") {
+            steps {
+                sh """
+                   cat deployment.yaml
+                   sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deployment.yaml
+                   cat deployment.yaml
+                """
+            }
+        }
+	  stage("Push the changed deployment file to Git") {
+            steps {
+                sh """
+                   git config --global user.name "Sree49"
+                   git config --global user.email "sreenija4363@gmail.com"
+                   git add deployment.yaml
+                   git commit -m "Updated Deployment Manifest with iamge tag"
+                """
+                withCredentials([gitUsernamePassword(credentialsId: 'github', gitToolName: 'Default')]) {
+                  sh "git push https://github.com/Sree49/AWS.git main"
+                }
+            }
+	  }
 	  stage ('Cleanup Artifacts') {
            steps {
                script {
@@ -98,7 +126,7 @@ pipeline {
 	  stage("Trigger CD Pipeline") {
             steps {
                 script {
-                    sh "curl -v -k --user sreenija:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-16-179-200-12.ap-southeast-2.compute.amazonaws.com:8080/job/Project/buildWithParameters?token=gitopstoken'"
+                    sh "curl -v -k --user sreenija:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'http://ec2-16-179-200-12.ap-southeast-2.compute.amazonaws.com:8080/job/Project/buildWithParameters?token=gitopstoken'"
                 }
             }
        }
