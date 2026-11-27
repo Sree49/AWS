@@ -54,6 +54,7 @@ Jenkins-> Tools -> Add maven and jdk versions to install automatically.
 
 Intergrate Sonarqube: 
 
+Install new ubuntu server for sonarqube:
 $ sudo apt update
     $ sudo apt upgrade
 ## Add PostgresSQL repository
@@ -155,7 +156,45 @@ Jenkins-Portal -> Tools -> Check Install sonarqube automatically and save.
 
 Jenkins Portal-> System -> Add Sonarqube connection - server url, token select and save.
 
+Create webhook in sonarqube. Administration-> Webhook -> give http://<jenkins-ip>:8080/sonarqube-webhook/ and create.
 Build Jenkins job.
+
+
+Docker Setup:
+
+Create Jenkins credential to store docker username and secret.
+
+
+Kubernetes Setup:
+
+Install new ubuntu ec2 for kubernetes setup:
+
+## Installing kubectl
+Refer--https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+$ sudo su
+$ curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.1/2023-04-19/bin/linux/amd64/kubectl
+$ ll , $ chmod +x ./kubectl  //Gave executable permisions
+$ mv kubectl /bin   //Because all our executable files are in /bin
+$ kubectl version --output=yaml
+
+## Installing  eksctl
+Refer---https://github.com/eksctl-io/eksctl/blob/main/README.md#installation
+$ curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+$ cd /tmp
+$ ll
+$ sudo mv /tmp/eksctl /bin
+$ eksctl version
+
+Add new IAM role and provide administrator access and attach IAM role to ec2.
+
+## Setup Kubernetes using eksctl
+Refer--https://github.com/aws-samples/eks-workshop/issues/734
+$ eksctl create cluster --name virtualtechbox-cluster \
+--region ap-south-1 \
+--node-type t2.small \
+--nodes 3 \
+
+$ kubectl get nodes
 
 
 
