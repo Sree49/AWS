@@ -213,7 +213,7 @@ Argo cd installation:
     $ chmod +x /usr/local/bin/argocd
 
 5 ) Expose argocd-server
-    $ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+    $ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}' \
 
 6 ) Wait about 2 minutes for the LoadBalancer creation
     $ kubectl get svc -n argocd
