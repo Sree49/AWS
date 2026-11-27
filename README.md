@@ -237,6 +237,28 @@ Argo cd installation:
 
 
 13 ) $ kubectl get svc
+
+Argocd url: http://a0acc69b224ef4938a32a5ee3a2c4cb4-533394942.ap-southeast-2.elb.amazonaws.com/
+
+Add Github repo in settings.
+
+Copy kubernetes manifest files to github repo.
+
+Add Application -> select repo, cluster and namespace and create. App will be created and resources will be deployed.
+
+Integrate CI/CD to Jenkins Pipeline:
+
+In Job edit This project is parameterized and add IMAGE_TAG, Trigger builds remotely (e.g., from scripts) enter gitopstoken.
+
+Create jenkins api token-> Account-> Security-> API Token-> JENKINS_API_TOKEN
+
+Copy this token to Jenkins Credential.
+
+Add environment variable -JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN") in jenkinsfile.
+
+
+
+
 ============================================================= Cleanup =============================================================
 $ kubectl get all
 $ kubectl delete deployment.apps/virtualtechbox-regapp       //it will delete the deployment
